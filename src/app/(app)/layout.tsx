@@ -132,7 +132,7 @@ export default async function RootLayout(props: PropsWithChildren) {
         <head>
           <PublicEnvScript />
 
-          <SayHi />
+          {/* <SayHi /> */}
         </head>
         <body
           className={`${sansFont.variable} ${serifFont.variable} m-0 h-full p-0 font-sans`}
@@ -156,7 +156,7 @@ export default async function RootLayout(props: PropsWithChildren) {
         <head>
           <PublicEnvScript />
           <Global />
-          <SayHi />
+          {/* <SayHi /> */}
           <HydrationEndDetector />
           <AccentColorStyleInjector color={themeConfig.config.color} />
 
