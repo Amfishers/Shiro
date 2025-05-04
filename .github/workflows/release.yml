@@ -60,3 +60,25 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./assets/release.zip
           asset_content_type: application/zip
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: release-package
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Transfer and Deploy
+        run: |
+          scp -r release.tar.gz ${{ secrets.DEPLOY_USER }}@${{ secrets.SERVER_IP }}:/home/deployer/releases/
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.SERVER_IP }} "cd /home/deployer/releases && tar -xzvf release.tar.gz && cd standalone && export PORT=2323 && nohup node server.js > app.log 2>&1 &"
