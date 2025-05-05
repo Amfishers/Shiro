@@ -1,0 +1,19 @@
+name: Deploy on Push
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Server Update
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/shiro
+            curl -L https://raw.githubusercontent.com/Amfishers/Shiro/main/docker-compose.yml -o docker-compose.yml
+            docker compose down
+            docker compose up -d
