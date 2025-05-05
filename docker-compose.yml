@@ -1,11 +1,10 @@
-version: '3.8'
+version: '3'
 
 services:
   shiro:
     container_name: Shiro
     image: innei/shiro:latest
     volumes:
-      - ./app:/app
       - ./.env:/app/.env
     restart: always
     environment:
